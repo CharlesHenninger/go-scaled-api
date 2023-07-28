@@ -1,5 +1,5 @@
 # Intro
-This solution uses golang with the Echo API framework, Postgres, Docker, and Kubernetes to fulfill the desired requirements.
+This solution uses golang with the Echo API framework, Postgres, Docker, and Kubernetes.
 
 
 # Scaling
@@ -8,7 +8,7 @@ Scaling this solution is done via Kubernetes and Docker. Some of the logic and r
 
 ## Kubernetes & Docker
 The Echo server is containerized as a Docker image, which would normally be pushed to Docker hub during the deployment stage of a hypothetical development pipeline.
-We have a kubernetes deployment for our server, see `k8s/examples/api-deployment.yml`, which uses our server docker image to run the application as a pod. Increasing or decreasing the number of these pods running simultaneously allows us to scale the application, and is handled via the HorizontalPodAutoscaler defined at `k8s/examples/api-autoscalar.yml`.
+We have a kubernetes deployment for our server, see `k8s/examples/api-deployment.yml`, which uses our server docker image to run the application as a pod. Increasing or decreasing the number of these pods running simultaneously allows us to scale the application, and is handled via the HorizontalPodAutoscaler defined at `k8s/example/api-autoscalar.yml`.
 
 
 Similarly, our database is scaled by deploying the Postgres docker image via a kubernetes deployment and controlled via a HorizontalPodAutoscaler. As traffic changes, our autoscaler will create/destroy postgres instances/pods to match. These pods will share a persistent volume claim, allowing our data to exist independently from our database instances.
