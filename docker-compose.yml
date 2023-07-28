@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+
+  api:
+    networks:
+      local_testing:
+        ipv4_address: 172.16.238.10
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    depends_on:
+      - db
+    ports:
+      - 1323:1323
+    environment:
+      - DATABASE_HOST=172.16.238.11
+      - DATABASE_NAME=mailgun
+      - DATABASE_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mailgun
+
+  db:
+    image: postgres:13
+    restart: always
+    networks:
+      local_testing:
+        ipv4_address: 172.16.238.11
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mailgun
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./services/db/sql-init.sql:/docker-entrypoint-initdb.d/sql-init.sql
+    
+networks:
+  local_testing:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24  
+  
+
