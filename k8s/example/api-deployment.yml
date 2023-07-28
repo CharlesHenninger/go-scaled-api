@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: mailgundemo-api
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: mailgundemo-api
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mailgundemo-api
+    spec:
+      containers:
+      - image: go-scaled-api-api:latest
+        imagePullPolicy: IfNotPresent
+        name: mailgundemo-api
+        ports:
+        - containerPort: 1323
+      restartPolicy: Always
+status: {}
+

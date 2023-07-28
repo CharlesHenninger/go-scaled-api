@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres-container
+        image: postgres:latest
+        imagePullPolicy: "IfNotPresent"
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 20 && PGPASSWORD=$POSTGRES_PASSWORD psql -w -d $POSTGRES_DB -U $POSTGRES_USER -c 'CREATE TABLE IF NOT EXISTS domains (id SERIAL PRIMARY KEY,name TEXT,events INT64,bounced BOOL);'"]
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: Postgres_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: Postgres_User
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: Postgres_Password
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgredb
+      volumes:
+      - name: postgredb
+      # <some existing persistent volume claim>

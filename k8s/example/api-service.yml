@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mailgundemo-api
+  name: mailgundemo-api
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: mailgundemo-api
+  ports:
+  - name: http
+    protocol: TCP
+    port: 1323
+    targetPort: 1323
+status:
+  loadBalancer:
+    ingress:
+  # <some ip or existing ip resource>
